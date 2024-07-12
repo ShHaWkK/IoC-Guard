@@ -12,6 +12,12 @@ if __name__ == "__main__" and __package__ is None:
 else:
     from .database import engine, Alert
 
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from slack_sdk import WebClient
+from slack_sdk.errors import SlackApiError
+
 # Lire le fichier de configuration
 def load_config(config_path='config/config.yaml'):
     with open(config_path, 'r') as file:
@@ -25,6 +31,7 @@ def fetch_iocs(ioc_sources=None, test_data=None):
     iocs_list = []
     for source in ioc_sources:
         try:
+            print(f"Fetching IoCs from {source['url']} with headers {source['headers']}")
             response = requests.get(source['url'], headers=source['headers'])
             response.raise_for_status()
             iocs = response.json()
@@ -39,6 +46,51 @@ def fetch_iocs(ioc_sources=None, test_data=None):
         return pd.concat(iocs_list, ignore_index=True)
     else:
         return pd.DataFrame()
+
+# Fonction pour envoyer une notification par email
+
+
+
+def send_email(alert):
+    sender_email = "your_email@example.com"
+    receiver_email = "recipient@example.com"
+    password = os.getenv("EMAIL_PASSWORD")
+
+    message = MIMEMultipart("alternative")
+    message["Subject"] = "IoC Alert"
+    message["From"] = sender_email
+    message["To"] = receiver_email
+
+    text = f"Alert: Malicious IoC detected - {alert}"
+    part = MIMEText(text, "plain")
+    message.attach(part)
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_email, message.as_string())
+
+def send_slack_alert(alert):
+    client = WebClient(token=os.getenv("SLACK_TOKEN"))
+
+    try:
+        response = client.chat_postMessage(
+            channel="#your-channel",
+            text=f"Alert: Malicious IoC detected - {alert}"
+        )
+    except SlackApiError as e:
+        print(f"Error sending Slack message: {e.response['error']}")
+
+# Fonction pour envoyer une notification Slack
+def send_slack_alert(alert):
+    client = WebClient(token="your-slack-bot-token")
+
+    try:
+        response = client.chat_postMessage(
+            channel="#your-channel",
+            text=f"Alert: Malicious IoC detected - {alert}"
+        )
+    except SlackApiError as e:
+        print(f"Error sending Slack message: {e.response['error']}")
 
 # Fonction pour surveiller les systèmes locaux
 def monitor_system(config):
@@ -77,14 +129,16 @@ def check_local_system(ioc):
     return False
 
 # Fonction simulée pour récupérer des logs locaux
-
 def get_local_logs():
-    return ["192.168.1.1", "117.50.137.84"] 
-
+    # Ajoutez une adresse IP malveillante pour tester
+    return ["192.168.1.1", "117.50.137.84"]
 
 # Exemple de fonction d'alerte
 def alert(ioc):
-    return f"Alert: Malicious IoC detected - {ioc}"
+    alert_message = f"Alert: Malicious IoC detected - {ioc}"
+    send_email(alert_message)
+    send_slack_alert(alert_message)
+    return alert_message
 
 if __name__ == "__main__":
     config = load_config()
