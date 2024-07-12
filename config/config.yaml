@@ -1,0 +1,3 @@
+ioc_sources:
+  - "https://example.com/iocs1"
+  - "https://example.com/iocs2"
