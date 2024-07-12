@@ -8,17 +8,13 @@ class TestMonitor(unittest.TestCase):
         self.assertIn('ioc_sources', config)
 
     def test_fetch_iocs(self):
-        test_data1 = [
-            {"type": "ip", "value": "192.168.1.1"},
-            {"type": "hash", "value": "abcd1234"}
+        test_data = [
+            {"ipAddress": "192.168.1.1"},
+            {"ipAddress": "192.168.1.2"}
         ]
-        test_data2 = [
-            {"type": "ip", "value": "192.168.1.2"},
-            {"type": "hash", "value": "abcd5678"}
-        ]
-        iocs = fetch_iocs(test_data=test_data1 + test_data2)
+        iocs = fetch_iocs(test_data=test_data)
         self.assertIsInstance(iocs, pd.DataFrame)
-        self.assertEqual(len(iocs), 4)
+        self.assertEqual(len(iocs), 2)
 
 if __name__ == '__main__':
     unittest.main()

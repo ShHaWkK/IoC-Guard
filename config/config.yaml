@@ -1,3 +1,5 @@
 ioc_sources:
-  - "https://example.com/iocs1"
-  - "https://example.com/iocs2"
+  - url: "https://api.abuseipdb.com/api/v2/blacklist"
+    headers:
+      Key: "API_KEY"
+      Accept: "application/json"
