@@ -4,8 +4,7 @@ import pandas as pd
 import yaml
 import os
 from sqlalchemy.orm import sessionmaker
-from src.database import engine, Alert  # Chemin absolu utilisé ici
-
+from src.database import engine, Alert  
 app = Flask(__name__)
 
 # Lire le fichier de configuration
@@ -35,8 +34,7 @@ def fetch_iocs(ioc_sources=None):
 
 # Exemple de fonction pour vérifier les systèmes locaux
 def check_local_system(ioc):
-    # Implémentez la logique pour vérifier les IoC sur vos systèmes locaux
-    # Par exemple, vérifier les logs pour les adresses IP
+    # vérifier les logs pour les adresses IP
     if ioc['ipAddress'] in get_local_logs():
         return True
     return False
@@ -46,11 +44,10 @@ def get_local_logs():
     # Cette fonction doit récupérer et renvoyer les logs de votre système
     return ["192.168.1.1", "192.168.1.2"]
 
-# Exemple de fonction d'alerte
 def alert(ioc):
     return f"Alert: Malicious IoC detected - {ioc}"
 
-# Route pour afficher les alertes
+# afficher les alertes
 @app.route('/')
 def index():
     Session = sessionmaker(bind=engine)
