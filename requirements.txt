@@ -2,3 +2,6 @@ flask
 pandas
 requests
 PyYAML
+sqlalchemy
+gunicorn
+slack_sdk

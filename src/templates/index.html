@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>IoC Alerts</title>
+</head>
+<body>
+    <h1>IoC Alerts</h1>
+    <ul>
+        {% for alert in alerts %}
+            <li>{{ alert.ip_address }} - {{ alert.country_code }} - {{ alert.abuse_confidence_score }} - {{ alert.last_reported_at }} - {{ alert.detected_at }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
