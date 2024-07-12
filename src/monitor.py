@@ -2,6 +2,15 @@ import requests
 import pandas as pd
 import yaml
 import os
+from sqlalchemy.orm import sessionmaker
+
+if __name__ == "__main__" and __package__ is None:
+    import sys
+    from os import path
+    sys.path.append(path.abspath(path.join(path.dirname(__file__), '..')))
+    from src.database import engine, Alert
+else:
+    from .database import engine, Alert
 
 # Lire le fichier de configuration
 def load_config(config_path='config/config.yaml'):
@@ -33,28 +42,49 @@ def fetch_iocs(ioc_sources=None, test_data=None):
 
 # Fonction pour surveiller les systèmes locaux
 def monitor_system(config):
+    Session = sessionmaker(bind=engine)
+    session = Session()
     iocs = fetch_iocs(ioc_sources=config['ioc_sources'])
     print("IoCs fetched:", iocs)
 
-    # Logique de détection de base
+    # Logique de détection avancée
+    alerts = []
     for index, ioc in iocs.iterrows():
         if check_local_system(ioc):
-            alert(ioc)
+            alert_msg = alert(ioc)
+            alerts.append(alert_msg)
+            # Ajouter l'alerte à la base de données
+            new_alert = Alert(
+                ip_address=ioc['ipAddress'],
+                country_code=ioc['countryCode'],
+                abuse_confidence_score=ioc['abuseConfidenceScore'],
+                last_reported_at=pd.to_datetime(ioc['lastReportedAt'])
+            )
+            session.add(new_alert)
+            session.commit()
+    if alerts:
+        for alert_msg in alerts:
+            print(alert_msg)
+    else:
+        print("No threats detected.")
 
 # Exemple de fonction pour vérifier les systèmes locaux
 def check_local_system(ioc):
     # Implémentez la logique pour vérifier les IoC sur vos systèmes locaux
+    # Par exemple, vérifier les logs pour les adresses IP
     if ioc['ipAddress'] in get_local_logs():
         return True
     return False
 
 # Fonction simulée pour récupérer des logs locaux
+
 def get_local_logs():
-    return ["192.168.1.1", "192.168.1.2"]
+    return ["192.168.1.1", "117.50.137.84"] 
+
 
 # Exemple de fonction d'alerte
 def alert(ioc):
-    print(f"Alert: Malicious IoC detected - {ioc}")
+    return f"Alert: Malicious IoC detected - {ioc}"
 
 if __name__ == "__main__":
     config = load_config()
