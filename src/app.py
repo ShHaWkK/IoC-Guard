@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request
 import requests
 import pandas as pd
 import yaml
@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import io
 import base64
 from sqlalchemy.orm import sessionmaker
-from src.database import engine, Alert  
+from src.database import engine, Alert
 
 app = Flask(__name__)
 
@@ -53,7 +53,7 @@ def stats():
     alerts = session.query(Alert).all()
 
     # Créer un graphique des alertes par pays
-    country_counts = pd.DataFrame([a.country_code for a in alerts]).value_counts()
+    country_counts = pd.DataFrame([a.country_code for a in alerts], columns=['country_code']).value_counts()
     plt.figure(figsize=(10, 5))
     country_counts.plot(kind='bar')
     plt.title('Alerts by Country')
