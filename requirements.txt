@@ -5,3 +5,5 @@ PyYAML
 sqlalchemy
 gunicorn
 slack_sdk
+twilio
+matplotlib
