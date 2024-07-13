@@ -8,8 +8,17 @@
     <h1>IoC Alerts</h1>
     <ul>
         {% for alert in alerts %}
-            <li>{{ alert.ip_address }} - {{ alert.country_code }} - {{ alert.abuse_confidence_score }} - {{ alert.last_reported_at }} - {{ alert.detected_at }}</li>
+            <li>{{ alert.ip_address }} - {{ alert.country_code }} - {{ alert.abuse_confidence_score }} - {{ alert.last_reported_at }} - <a href="{{ url_for('resolve_alert', alert_id=alert.id) }}">Mark as resolved</a></li>
         {% endfor %}
     </ul>
+    <a href="{{ url_for('resolved_alerts') }}">View resolved alerts</a>
+    <div>
+        {% if prev_url %}
+            <a href="{{ prev_url }}">Previous</a>
+        {% endif %}
+        {% if next_url %}
+            <a href="{{ next_url }}">Next</a>
+        {% endif %}
+    </div>
 </body>
 </html>

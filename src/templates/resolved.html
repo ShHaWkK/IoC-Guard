@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resolved IoC Alerts</title>
+</head>
+<body>
+    <h1>Resolved IoC Alerts</h1>
+    <ul>
+        {% for alert in alerts %}
+            <li>{{ alert.ip_address }} - {{ alert.country_code }} - {{ alert.abuse_confidence_score }} - {{ alert.last_reported_at }} - {{ alert.detected_at }}</li>
+        {% endfor %}
+    </ul>
+    <a href="{{ url_for('index') }}">Back to active alerts</a>
+</body>
+</html>
