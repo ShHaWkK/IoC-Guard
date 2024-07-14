@@ -8,7 +8,7 @@ oC-Watchdog is a system for monitoring indicators of compromise (IoCs) to detect
 1. Clone the repository:
     ```bash
     git clone https://github.com/ShHaWkK/IoC-Guard.git
-    cd IoC-Watchdog
+    cd IoC-Guard
     ```
 
 2. Create and activate a virtual environment:
